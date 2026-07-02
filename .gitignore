@@ -1,0 +1,21 @@
+# python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# node / vite
+node_modules/
+dist/
+.vite/
+
+# env files (don't commit secrets)
+.env
+*.local
+
+# editor / os junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
