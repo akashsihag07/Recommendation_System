@@ -1,55 +1,60 @@
-import json
+"""
+
+Helpers for cleaning movie data.
+"""
 
 
-def parse_names(raw: str):
-    if not raw:
-        return []
+def safe_int(val, default=0):
+    """Convert to int."""
     try:
-        items = json.loads(raw)
-        return [it["name"] for it in items if it.get("name")]
-    except (json.JSONDecodeError, TypeError):
-        return []
-
-
-def to_int(value, default=0):
-    try:
-        return int(float(value))
+        return int(float(val))
     except (ValueError, TypeError):
         return default
 
 
-def to_float(value, default=0.0):
+def safe_float(val, default=0.0):
+    """Convert to float."""
     try:
-        return float(value)
+        return float(val)
     except (ValueError, TypeError):
         return default
 
 
-def year_from_date(date_str: str):
+def parse_tags(txt):
+    """Split a comma-separated string."""
+    if not txt:
+        return []
+
+    return [tag.strip() for tag in txt.split(",") if tag.strip()]
+
+
+def get_year(date_str):
+    """Extract the release year."""
     if date_str and len(date_str) >= 4:
-        return to_int(date_str[:4], default=None)
+        return safe_int(date_str[:4], default=None)
+
     return None
 
 
-def clean_row(row: dict):
+def parse_row(row):
+    """Clean a CSV row."""
     title = (row.get("title") or "").strip()
-    genres = parse_names(row.get("genres", ""))
+    genres = parse_tags(row.get("genres", ""))
+    desc = (row.get("overview") or "").strip()
 
-    
-    if not title or not genres:
+    if not title or not genres or not desc:
         return None
 
     return {
-        "tmdb_id": to_int(row.get("id")),
+        "tmdb_id": safe_int(row.get("id")),
         "title": title,
-        "year": year_from_date(row.get("release_date", "")),
-        "rating": to_float(row.get("vote_average")),
-        "vote_count": to_int(row.get("vote_count")),
-        "popularity": to_float(row.get("popularity")),
-        "runtime": to_int(row.get("runtime")),
-        "language": (row.get("original_language") or "en").strip(),
-        "overview": (row.get("overview") or "").strip(),
+        "year": get_year(row.get("release_date", "")),
+        "rating": safe_float(row.get("vote_average")),
+        "votes": safe_int(row.get("vote_count")),
+        "pop": safe_float(row.get("popularity")),
+        "runtime": safe_int(row.get("runtime")),
+        "lang": (row.get("original_language") or "").strip(),
+        "desc": desc,
         "genres": genres,
-        "keywords": parse_names(row.get("keywords", "")),
-        "source": "hollywood",
+        "tags": parse_tags(row.get("keywords", "")),
     }
