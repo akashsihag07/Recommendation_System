@@ -1,0 +1,56 @@
+# Runs the whole stack: mongo database + python backend + react frontend.
+# Everything talks over a custom bridge network called "movienet".
+#
+#   docker compose up --build
+#
+# then open http://localhost:3000
+
+services:
+  db:
+    image: mongo:7
+    container_name: movie-db
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db        # keeps the data between restarts
+    networks:
+      - movienet
+    # the db isn't published to the host - only the backend (on the network)
+    # needs to reach it. uncomment if you want to inspect it with Compass:
+    # ports:
+    #   - "27017:27017"
+
+  backend:
+    build: ./backend
+    container_name: movie-backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      MONGO_URI: mongodb://db:27017
+      DB_NAME: moviedb
+    ports:
+      - "8000:8000"                # API + docs at http://localhost:8000/docs
+    networks:
+      - movienet
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # baked into the build so the browser knows where the API is
+        VITE_API_URL: http://localhost:8000
+    container_name: movie-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"                  # the app: http://localhost:3000
+    networks:
+      - movienet
+
+volumes:
+  mongo_data:
+
+networks:
+  movienet:
+    driver: bridge
