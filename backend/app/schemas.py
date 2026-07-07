@@ -1,4 +1,4 @@
-"""
+"""schemas.py
 
 Pydantic models used by the API.
 """
@@ -7,8 +7,10 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+
 class ScoringWeights(BaseModel):
-    """Optional scoring weights the four scoring components. sum should = to 1."""
+    """Optional scoring weights. Should sum to 1."""
+
     gen: float = 0.50
     sim: float = 0.25
     rat: float = 0.15
@@ -24,8 +26,8 @@ class UserPrefs(BaseModel):
     year_to: Optional[int] = None
     fav_movie: Optional[str] = None
     lang: str = "any"
+    weights: Optional[ScoringWeights] = None
     limit: int = 12
-    weights: Optional[ScoringWeights] = None #for scoring weights
 
 
 class MovieRes(BaseModel):
@@ -34,16 +36,11 @@ class MovieRes(BaseModel):
     title: str
     year: Optional[int] = None
     rating: float
+    votes: int
     genres: List[str]
     desc: str
     runtime: int
     lang: str
+    poster: str
     score: float
     reason: str
-    #i am updating for poster,votes
-    poster: str
-<<<<<<< Updated upstream
-    votes:  int
-=======
-    votes:  int
->>>>>>> Stashed changes
