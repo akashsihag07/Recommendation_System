@@ -49,14 +49,19 @@ def score_pop(pop_val, max_log):
 
     return math.log1p(pop_val) / max_log
 
-
-def calc_total(g_score, sim_score, rating, pop_score):
+#writing w for scoring weights, return main small w and if condition
+def calc_total(g_score, sim_score, rating, pop_score,w=None):
     """Calculate the final score."""
+    if w is None:
+        w = W
     rating_score = rating / 10.0
 
     return (
-        W["gen"] * g_score
-        + W["sim"] * sim_score
-        + W["rat"] * rating_score
-        + W["pop"] * pop_score
+        w["gen"] * g_score
+        + w["sim"] * sim_score
+        + w["rat"] * rating_score
+        + w["pop"] * pop_score
     )
+
+def blend_sim(semantic, tag):
+    return 0.7 * semantic + 0.3 * tag

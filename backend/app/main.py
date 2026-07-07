@@ -12,6 +12,7 @@ from pymongo.errors import ConnectionFailure
 from .database import check_db
 from .routers import genres, health, languages, recommend, search
 from .seed import init_db
+from .vectors import load_vectors
 
 app = FastAPI(title="Movie Matcher API", version="1.0")
 
@@ -38,6 +39,7 @@ def start_server():
         try:
             check_db()
             init_db()
+            load_vectors()
             return
 
         except ConnectionFailure:

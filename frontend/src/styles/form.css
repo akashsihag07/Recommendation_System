@@ -1,5 +1,3 @@
-/* The preferences panel: genre chips, the rating slider, the year boxes, the
-   favorite-movie autocomplete, and the submit button. */
 
 .form {
   background: var(--bg-soft);
@@ -21,7 +19,6 @@
   letter-spacing: 0.6px;
 }
 
-/* two columns on wider screens (rating + year), stacked on mobile */
 .form-row {
   display: flex;
   gap: 32px;
@@ -33,7 +30,6 @@
   min-width: 220px;
 }
 
-/* ---- genre chips ---- */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -62,13 +58,13 @@
   font-weight: 600;
 }
 
-/* ---- slider ---- */
+
 input[type="range"] {
   width: 100%;
   accent-color: var(--accent);
 }
 
-/* ---- year inputs ---- */
+
 .year-inputs {
   display: flex;
   align-items: center;
@@ -88,7 +84,6 @@ input[type="range"] {
   color: var(--text-dim);
 }
 
-/* ---- favorite autocomplete ---- */
 .fav-block {
   position: relative;
   margin-bottom: 26px;
@@ -133,7 +128,7 @@ input[type="range"] {
   color: var(--accent);
 }
 
-/* ---- submit ---- */
+
 .submit-btn {
   width: 100%;
   background: var(--accent);
@@ -155,7 +150,7 @@ input[type="range"] {
   cursor: default;
 }
 
-/* ---- language dropdown ---- */
+
 .lang-select {
   width: 100%;
   background: var(--bg-card);
@@ -169,4 +164,75 @@ input[type="range"] {
 .lang-select:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+.weights-panel {
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-card);
+}
+
+.weights-toggle {
+  width: 100%;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.weights-body {
+  padding: 4px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weights-hint {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin: 0 0 4px;
+}
+
+.weight-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weight-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.weight-value {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.weight-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.weights-split {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+
+.weights-reset {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.8rem;
+  padding: 0;
+  cursor: pointer;
 }

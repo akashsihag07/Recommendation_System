@@ -7,6 +7,13 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+class ScoringWeights(BaseModel):
+    """Optional scoring weights the four scoring components. sum should = to 1."""
+    gen: float = 0.50
+    sim: float = 0.25
+    rat: float = 0.15
+    pop: float = 0.10
+
 
 class UserPrefs(BaseModel):
     """Search preferences from the client."""
@@ -18,6 +25,7 @@ class UserPrefs(BaseModel):
     fav_movie: Optional[str] = None
     lang: str = "any"
     limit: int = 12
+    weights: Optional[ScoringWeights] = None #for scoring weights
 
 
 class MovieRes(BaseModel):
@@ -34,4 +42,8 @@ class MovieRes(BaseModel):
     reason: str
     #i am updating for poster,votes
     poster: str
+<<<<<<< Updated upstream
     votes:  int
+=======
+    votes:  int
+>>>>>>> Stashed changes

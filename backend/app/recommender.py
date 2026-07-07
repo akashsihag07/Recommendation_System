@@ -8,6 +8,7 @@ import re
 
 from . import config, scoring
 from .database import get_movies_coll
+from . import vectors
 
 
 def build_query(prefs):
@@ -42,7 +43,9 @@ def get_recs(prefs):
     coll = get_movies_coll()
     user_genres = {g.strip() for g in prefs.genres if g.strip()}
     candidates = list(coll.find(build_query(prefs)))
+    w = prefs.weights.model_dump() if prefs.weights else None #change bcz of scoring weights
     fav = find_fav(prefs.fav_movie)
+    fav_vec = vectors.get_vec(fav.get("tmdb_id")) if fav else None
     fav_genres = set(fav["genres"]) if fav else set()
     fav_tags = set(fav.get("tags", [])) if fav else set()
     max_pop = max((m.get("pop", 0) for m in candidates), default=1.0) or 1.0
@@ -53,22 +56,22 @@ def get_recs(prefs):
             continue
         movie_genres = set(movie.get("genres", []))
         genre_score = scoring.score_genres(user_genres, movie_genres)
-        similarity = (
-            scoring.score_tags(
-                fav_genres,
-                fav_tags,
-                movie_genres,
-                set(movie.get("tags", [])),
-            )
-            if fav
-            else 0.0
-        )
+        if fav:
+            tag_sim = scoring.score_tags(fav_genres, fav_tags, movie_genres, set(movie.get("tags", [])))
+            mov_vec = vectors.get_vec(movie.get("tmdb_id"))
+            if fav_vec is not None and mov_vec is not None:
+                sem = max(0.0, vectors.cosine(fav_vec, mov_vec))
+                similarity = scoring.blend_sim(sem, tag_sim)
+            else:
+                similarity = tag_sim
+        else:
+            similarity = 0.0
         pop_score = scoring.score_pop(movie.get("pop", 0), max_log)
         total = scoring.calc_total(
             genre_score,
             similarity,
             movie.get("rating", 0),
-            pop_score,
+            pop_score,w
         )
         if user_genres and genre_score == 0 and not fav:
             continue
