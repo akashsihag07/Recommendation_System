@@ -57,4 +57,5 @@ def parse_row(row):
         "desc": desc,
         "genres": genres,
         "tags": parse_tags(row.get("keywords", "")),
+        "poster": (row.get("poster_path") or "").strip(),# i have added new column for poster image..
     }

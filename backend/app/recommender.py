@@ -93,6 +93,8 @@ def format_res(score, picked, movie):
         "lang": movie.get("lang", ""),
         "score": round(score * 100, 1),
         "reason": get_reason(picked, movie_genres, movie),
+        "poster": movie.get("poster", ""), #updating for poster and votes
+        "votes": movie.get("votes", 0),
     }
 
 

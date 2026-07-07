@@ -32,3 +32,6 @@ class MovieRes(BaseModel):
     lang: str
     score: float
     reason: str
+    #i am updating for poster,votes
+    poster: str
+    votes:  int
