@@ -44,7 +44,7 @@ Each card contains:
 
 Hovering the mouse over a card produces a subtle 3D tilt effect.
 
-<img src="docs/screenshots/img03_card_darkknight.png" alt="Figure 3: A single result card with the overview expanded." width="900"/>
+<img src="docs/screenshots/img03_card_darkknight.png" alt="Figure 3: A single result card with the overview expanded." width="350"/>
 *Figure 3: A single result card with the overview expanded.*
 
 ---
