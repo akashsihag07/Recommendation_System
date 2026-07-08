@@ -29,7 +29,7 @@ export default function App() {
         />
       </main>
       <footer className="footer">
-        <p>WatchHub {"\u2014"} find your next movie.</p>
+        <p>WatchHub:Find your next movie.</p>
         <p>
           Movie data from{" "}
           <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">
