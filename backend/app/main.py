@@ -1,6 +1,8 @@
 """
-
 Application entry point.
+
+Wires up CORS, mounts the routers, and runs the startup sequence.
+Nothing here does any recommendation work, that lives in recommender.
 """
 
 import time
@@ -17,6 +19,8 @@ from .vectors import load_vectors
 app = FastAPI(title="Movie Matcher API", version="1.0")
 
 
+# Open CORS because the frontend runs on a different port in the same
+# compose network. Would be a real origin list if this were public.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,7 +38,13 @@ app.include_router(recommend.router)
 
 @app.on_event("startup")
 def start_server():
-    """Initialize the application."""
+    """
+    Connect to mongo, seed if needed, load the vectors into memory.
+
+    Retries bcz compose starts the containers together and mongo is
+    usually still coming up when this first runs. depends_on only waits
+    for the container, not for mongo to accept connections.
+    """
     for attempt in range(1, 11):
         try:
             check_db()

@@ -1,11 +1,17 @@
 """
-
 Helpers for cleaning movie data.
+
+Turns one raw CSV row into the shape stored in Mongo. Everything here
+runs at seed time, once, so it can be defensive without costing anything.
 """
 
 
 def safe_int(val, default=0):
-    """Convert to int."""
+    """
+    Int or default. CSV fields come through as strings and some are junk.
+
+    Goes via float first so "7.0" doesn't blow up.
+    """
     try:
         return int(float(val))
     except (ValueError, TypeError):
@@ -13,7 +19,7 @@ def safe_int(val, default=0):
 
 
 def safe_float(val, default=0.0):
-    """Convert to float."""
+    """Float or default, for the same reason as safe_int."""
     try:
         return float(val)
     except (ValueError, TypeError):
@@ -21,7 +27,11 @@ def safe_float(val, default=0.0):
 
 
 def parse_tags(txt):
-    """Split a comma-separated string."""
+    """
+    Comma separated string to a list. Genres and keywords arrive this way.
+
+    Strips whitespace and drops empties, so trailing commas are harmless.
+    """
     if not txt:
         return []
 
@@ -29,7 +39,12 @@ def parse_tags(txt):
 
 
 def get_year(date_str):
-    """Extract the release year."""
+    """
+    Year out of a release date. Returns None if the date is missing or short.
+
+    Just takes the first four chars rather than parsing the whole date,
+    since the year is all we filter on.
+    """
     if date_str and len(date_str) >= 4:
         return safe_int(date_str[:4], default=None)
 
@@ -37,7 +52,14 @@ def get_year(date_str):
 
 
 def parse_row(row):
-    """Clean a CSV row."""
+    """
+    One CSV row to one movie doc, or None if it isn't usable.
+
+    Title, genres and overview are required. Without them the movie can't
+    be matched or shown, so it's dropped rather than stored half empty.
+    Keys are shortened here, so the rest of the app reads desc and pop
+    rather than overview and popularity.
+    """
     title = (row.get("title") or "").strip()
     genres = parse_tags(row.get("genres", ""))
     desc = (row.get("overview") or "").strip()

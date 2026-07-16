@@ -1,5 +1,8 @@
 """
-Scoring helpers for movie recommendations.
+Scoring helpers for movie recommendations.This module contains helper functions for computing genre, tag,
+popularity, and rating scores. All functions are stateless and
+return normalized values that can be combined into the final
+recommendation score.
 """
 
 import math
@@ -15,7 +18,7 @@ W = {
 
 
 def get_jaccard(s1, s2):
-    """Jaccard similarity."""
+    """Compute Jaccard similarity between two sets of tags or genres."""
     if not s1 or not s2:
         return 0.0
 
@@ -26,7 +29,7 @@ def get_jaccard(s1, s2):
 
 
 def score_genres(user_gens, movie_gens):
-    """Genre match score."""
+    """Calculate how well a movie matches the user's selected genres."""
     if not user_gens:
         return 0.0
 
@@ -35,7 +38,7 @@ def score_genres(user_gens, movie_gens):
 
 
 def score_tags(fav_g, fav_k, mov_g, mov_k):
-    """Favorite movie similarity."""
+    """Compute tag similarity between the fav movie and a candidate movie."""
     genre_score = get_jaccard(fav_g, mov_g)
     tag_score = get_jaccard(fav_k, mov_k)
 
@@ -43,7 +46,7 @@ def score_tags(fav_g, fav_k, mov_g, mov_k):
 
 
 def score_pop(pop_val, max_log):
-    """Normalize popularity."""
+    """Normalize popularity into score between 0 and 1 ."""
     if max_log <= 0:
         return 0.0
 
@@ -51,7 +54,7 @@ def score_pop(pop_val, max_log):
 
 #writing w for scoring weights, return main small w and if condition
 def calc_total(g_score, sim_score, rating, pop_score,w=None):
-    """Calculate the final score."""
+    """Combine all scoring components into the final recommendation score."""
     if w is None:
         w = W
     rating_score = rating / 10.0
@@ -64,4 +67,6 @@ def calc_total(g_score, sim_score, rating, pop_score,w=None):
     )
 
 def blend_sim(semantic, tag):
+    """Blend semantic and tag similarity into a single similarity score.
+    """
     return 0.7 * semantic + 0.3 * tag

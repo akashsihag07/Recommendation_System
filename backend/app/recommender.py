@@ -1,6 +1,7 @@
 """
-
-Recommendation logic and ranking.
+Recommendation logic and ranking. module is responsible for filtering candidate movies,
+calculating recommendation scores, ranking the results, and
+formatting the response returned by the api.
 """
 
 import math
@@ -12,7 +13,7 @@ from . import vectors
 
 
 def build_query(prefs):
-    """Build the MongoDB query."""
+    """Build the MongoDB query. filters selected by the user are included in the query; min vote count is enforced """
     query = {"votes": {"$gte": config.MIN_VOTES}}
     if prefs.min_rating:
         query["rating"] = {"$gte": prefs.min_rating}
@@ -29,7 +30,7 @@ def build_query(prefs):
 
 
 def find_fav(title):
-    """Find the selected favorite movie."""
+    """Find the user's fav movie using a case-insensitive exact title match."""
     if not title:
         return None
     pattern = "^" + re.escape(title.strip()) + "$"
@@ -39,7 +40,7 @@ def find_fav(title):
 
 
 def get_recs(prefs):
-    """Generate movie recommendations."""
+    """Generate recommendations by scoring, ranking, and filtering candidate movies."""
     coll = get_movies_coll()
     user_genres = {g.strip() for g in prefs.genres if g.strip()}
     candidates = list(coll.find(build_query(prefs)))
@@ -84,7 +85,7 @@ def get_recs(prefs):
 
 
 def format_res(score, picked, movie):
-    """Format a movie for the API."""
+    """Format movie doc into the response sent to the frontend."""
     movie_genres = set(movie.get("genres", []))
     return {
         "title": movie.get("title", ""),
